@@ -4,12 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index.js",
+    "test": "mocha --timeout 10000",
+    "test-posts-api": "mocha test/post.js --timeout 10000",
+    "test-auth-api": "mocha test/auth.js --timeout 10000"
   },
   "author": "abhay",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "chai": "^4.3.7",
+    "chai-http": "^4.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.1.4",
@@ -18,6 +23,7 @@
     "express-validator": "^7.0.1",
     "formidable": "^2.1.1",
     "jsonwebtoken": "^9.0.0",
+    "mocha": "^10.2.0",
     "mongodb": "^5.6.0",
     "mongoose": "^7.2.2",
     "morgan": "^1.10.0",

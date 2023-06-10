@@ -55,13 +55,13 @@ exports.follow = async (req, res) => {
     const { userId: followerId } = req;
 
     try {
-        // Check if the user to follow exists
+
         const userToFollow = await User.findById(id);
         if (!userToFollow) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Add the follower to the user's followers list
+
         if (!userToFollow.followers.includes(followerId)) {
             userToFollow.followers.push(followerId);
             await userToFollow.save();
@@ -86,20 +86,20 @@ exports.unfollow = async (req, res) => {
     const { userId: followerId } = req;
 
     try {
-        // Check if the user to unfollow exists
+
         const userToUnfollow = await User.findById(id);
         if (!userToUnfollow) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Remove the follower from the user's followers list
+
         const followerIndex = userToUnfollow.followers.indexOf(followerId);
         if (followerIndex !== -1) {
             userToUnfollow.followers.splice(followerIndex, 1);
             await userToUnfollow.save();
         }
 
-        // Remove the user from the follower's following list
+
         const follower = await User.findById(followerId);
         const followingIndex = follower.following.indexOf(id);
         if (followingIndex !== -1) {
@@ -138,18 +138,18 @@ exports.like = async (req, res) => {
     const { userId } = req;
 
     try {
-        // Find the post by ID
+
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // Check if the user has already liked the post
+
         if (post.likes.includes(userId)) {
             return res.status(400).json({ message: 'You have already liked this post' });
         }
 
-        // Add the user's ID to the post's likes array
+
         post.likes.push(userId);
         await post.save();
 
@@ -164,18 +164,18 @@ exports.unlike = async (req, res) => {
     const { userId } = req;
 
     try {
-        // Find the post by ID
+
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // Check if the user has already liked the post
+
         if (!post.likes.includes(userId)) {
             return res.status(400).json({ message: 'You have not liked this post' });
         }
 
-        // Remove the user's ID from the post's likes array
+
         const userIndex = post.likes.indexOf(userId);
         post.likes.splice(userIndex, 1);
         await post.save();
@@ -192,7 +192,7 @@ exports.comment = async (req, res) => {
     const { comment } = req.body;
 
     try {
-        // Find the post by ID
+
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
@@ -204,7 +204,7 @@ exports.comment = async (req, res) => {
             author: userId,
         };
 
-        // Add the comment to the post's comments array
+
         post.comments.push(Comment);
         await post.save();
         const commentId = post.comments[post.comments.length - 1]._id;

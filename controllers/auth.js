@@ -24,7 +24,7 @@ exports.signup = async (req, res) => {
         }
         user = new User(req.body);
         await user.save()
-        return res.status(200).json({
+        return res.status(201).json({
             name: user.name,
             email: user.email,
             id: user._id,
@@ -51,37 +51,37 @@ exports.signin = async (req, res) => {
         });
     }
 
-    //checking email is registered or not
+
     let user = await User.findOne({ email }).then(function (user, err) {
         if (err || !user) {
             return res.status(400).json({
                 error: "This email is not registered",
             });
         }
-        //checking password is correct or not
+
         if (!user.authenticate(password)) {
-            return res.status(401).json({
+            return res.status(400).json({
                 error: "Incorrect Password",
             });
         }
 
-        //creating token
+
         var token = jsonwebtoken.sign({ _id: user._id }, process.env.SECRET);
 
-        //putting token in cokkie
+
         res.cookie("token", token, { expire: new Date() } + 9999);
 
-        //send response to frontend
+
 
         const { _id, name, email, role } = user;
-        return res.json({ token });
+        return res.status(200).json({ token });
     });
 
 
 };
 
 exports.signout = (req, res) => {
-    //CLEAR COOKIE
+
     res.clearCookie("token");
     res.json({
         message: "User signout",
@@ -91,7 +91,6 @@ exports.signout = (req, res) => {
 
 exports.isAuthenticated = async (req, res, next) => {
     try {
-        // Check if the user is authenticated
         if (!req.headers.authorization) {
             return res.status(401).json({ message: 'Unauthorized' });
         }

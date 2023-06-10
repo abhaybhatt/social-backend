@@ -4,6 +4,7 @@ const express = require("express")
 const bodyParser = require("body-parser")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
+const morgan = require("morgan")
 
 const authRoutes = require('./routes/auth')
 const userRoutes = require('./routes/user')
@@ -14,6 +15,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
 
+
+app.use(morgan('combined'));
 app.use("/api/authenticate", authRoutes);
 app.use("/api/", userRoutes);
 app.use("/api/posts/", postRoutes);
@@ -36,3 +39,5 @@ mongoose
 app.listen(port, () => {
     console.log(`app running at ${port}`)
 });
+
+module.exports = app;

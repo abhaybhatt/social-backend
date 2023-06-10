@@ -7,22 +7,38 @@ exports.createPost = async (req, res) => {
     const { title, description } = req.body;
 
     try {
-        // Create a new post
+        if (title === '') {
+            return res.status(400).json({ message: 'Title is required' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+    try {
+        if (!title) {
+            return res.status(400).json({ message: 'Title is required' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+
+    try {
         const post = new Post({
             title,
             description,
             author: userId,
         });
 
-        // Save the post
+
         await post.save();
-        res.json({
+        res.status(200).json({
             id: post._id,
             description: post.description,
             title: post.title,
             createdAt: post.createdAt
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: 'Internal server error' });
     }
 }
@@ -32,13 +48,13 @@ exports.deletePost = async (req, res) => {
     const { id } = req.params;
 
     try {
-        // Find the post by ID
+
         const post = await Post.findById(id);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // Check if the authenticated user is the creator of the post
+
         if (post.author.toString() !== userId) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
@@ -55,7 +71,7 @@ exports.getPost = async (req, res) => {
     const { id } = req.params;
 
     try {
-        // Find the post by ID
+
         const post = await Post.findById(id)
             .populate('author', 'name')
             .populate('likes', 'name')
@@ -65,11 +81,11 @@ exports.getPost = async (req, res) => {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        // Get the number of likes and comments
+
         const likeCount = post.likes.length;
         const commentCount = post.comments.length;
 
-        // Prepare the post data to send in the response
+
         const postData = {
             _id: post._id,
             title: post.title,
@@ -92,13 +108,13 @@ exports.getAllPosts = async (req, res) => {
     const { userId } = req;
 
     try {
-        // Find all posts created by the authenticated user
+
         const posts = await Post.find({ author: userId })
             .sort({ createdAt: -1 })
             .populate('comments.author', 'name')
             .populate('likes', 'name');
 
-        // Prepare the data for each post
+
         const formattedPosts = posts.map(post => {
             return {
                 id: post._id,
@@ -110,7 +126,7 @@ exports.getAllPosts = async (req, res) => {
             };
         });
 
-        res.json({ posts: formattedPosts });
+        res.status(200).json({ posts: formattedPosts });
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: 'Internal server error' });
